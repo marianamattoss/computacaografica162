@@ -54,24 +54,6 @@ extern "C" {
 				app->world->addPolygon(name, coords, gtk_toggle_button_get_active(fillPolygon));
 
 				break;
-			case 3:
-				// addBezier
-				treeModel = gtk_tree_view_get_model(GTK_TREE_VIEW(app_get_ui_element(app, "newCurveCoordinates")));
-				coords = app->mainWindow->readCoordFrom(treeModel);
-				curveStep = GTK_SPIN_BUTTON(app_get_ui_element(app, "spinCurveStep"));
-
-				app->world->addBezier(name, coords, gtk_spin_button_get_value(curveStep));
-
-				break;
-			default:
-				// addBSplines
-				treeModel = gtk_tree_view_get_model(GTK_TREE_VIEW(app_get_ui_element(app, "newBSplineCoordinates")));
-				coords = app->mainWindow->readCoordFrom(treeModel);
-				curveStep = GTK_SPIN_BUTTON(app_get_ui_element(app, "spinBSplineStep"));
-
-				app->world->addBSpline(name, coords, gtk_spin_button_get_value(curveStep));
-
-				break;
 		}
 
 		GtkTreeIter iter;

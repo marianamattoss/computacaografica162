@@ -39,7 +39,7 @@ private:
 	GtkBuilder *_definitions;
 	World *_world;
 
-	const int MARGIN = 10;
+	const int MARGIN = 0;
 	int _rowCount = 8;
 
 public:

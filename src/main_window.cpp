@@ -38,9 +38,6 @@ void MainWindow::drawViewport(cairo_t *cr) {
 	/* fill in the background color*/
 	cairo_paint(cr);
 
-	cairo_set_source_rgb(cr, 1, 0, 0);
-	cairo_set_line_width(cr, 1);
-
 	GtkWidget *drawingArea = GTK_WIDGET(gtk_builder_get_object(_definitions, "drawingArea"));
 	int Xvmax = gtk_widget_get_allocated_width(drawingArea) - MARGIN;
 	int Yvmax = gtk_widget_get_allocated_height(drawingArea) - MARGIN;
