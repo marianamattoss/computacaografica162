@@ -8,7 +8,6 @@
 #include "line.hpp"
 #include "polygon.hpp"
 #include "window.hpp"
-#include "clipper.hpp"
 
 using namespace std;
 

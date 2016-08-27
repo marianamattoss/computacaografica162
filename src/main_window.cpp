@@ -88,7 +88,7 @@ void MainWindow::drawSingleObject(cairo_t *cr, DrawableObject object) {
 vector<DrawableObject> MainWindow::mapToViewport() {
 	vector<GeometricObject*> objects = _world->getObjects();
 	vector<DrawableObject> drawableObjects;
-	vector<Coordinate> newcoords, clippedCoords;
+	vector<Coordinate> newcoords;
 
 	GtkWidget *drawingArea = GTK_WIDGET(gtk_builder_get_object(_definitions, "drawingArea"));
 	Window window = _world->getWindow();
@@ -100,26 +100,20 @@ vector<DrawableObject> MainWindow::mapToViewport() {
 	bool shouldFill;
 
 	for (GeometricObject * object : objects) {
-		object->applyClipping();
-
-//		if (clippedCoords.empty())
-//			continue;
 
 		shouldFill = (object->type() == GeometricObjectType::polygon) && object->filled();
 
-		for (vector<Coordinate> clippedCoords : object->getClippedObjects()) {
-			newcoords.clear();
+		newcoords.clear();
 
-			for (Coordinate coord : clippedCoords) {
-				x = MARGIN + ( ((coord._x + 1) / 2) * (Xvmax - MARGIN) );
-				y = MARGIN + ( (1 - (coord._y + 1 ) / 2 ) * (Yvmax - MARGIN) );
+		for (Coordinate coord : object->coords()) {
+			x = MARGIN + ( ((coord._x + 1) / 2) * (Xvmax - MARGIN) );
+			y = MARGIN + ( (1 - (coord._y + 1 ) / 2 ) * (Yvmax - MARGIN) );
 
-				newcoords.push_back(Coordinate(x, y));
-			}
-
-			if (!newcoords.empty())
-				drawableObjects.push_back(DrawableObject(shouldFill ,newcoords, object->type()));
+			newcoords.push_back(Coordinate(x, y));
 		}
+
+		if (!newcoords.empty())
+			drawableObjects.push_back(DrawableObject(shouldFill, newcoords, object->type()));
 
 	}
 

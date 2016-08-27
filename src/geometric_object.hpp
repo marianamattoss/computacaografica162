@@ -6,15 +6,12 @@
 #include "transformable_object.hpp"
 #include "window.hpp"
 
-#define CLIPPED_OBJECT vector<Coordinate>
-
 using namespace std;
 
 enum GeometricObjectType {
 	point,
 	line,
-	polygon,
-	cubic_bezier
+	polygon
 };
 
 // ---------------------------
@@ -33,8 +30,6 @@ public:
 	bool filled() const;
 
 	void normalizeIn(Window window);
-	virtual void applyClipping() = 0;
-	vector<CLIPPED_OBJECT> getClippedObjects();
 
 	void translate(VECTOR deslocation);
 	void scaleTo(VECTOR factors);
@@ -50,7 +45,6 @@ protected:
 	GeometricObjectType _type;
 	vector<Coordinate> _worldCoords;
 	vector<Coordinate> _windowCoords;
-	vector<CLIPPED_OBJECT> _clippedObjects;
 
 	bool _filled = false;
 };
