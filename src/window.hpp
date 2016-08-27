@@ -17,7 +17,6 @@ public:
 
 	void move(Coordinate step);
 	void zoom(int step);
-	void rotate(double angle);
 
 	Coordinate center();
 

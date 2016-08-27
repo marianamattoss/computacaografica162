@@ -15,15 +15,6 @@ void Window::move(Coordinate step) {
 	_center._y += yFactor;
 }
 
-void Window::rotate(double angle) {
-	SQUARE_MATRIX rotationMatrix = _buildRotationMatrix(angle);
-	ROW_VECTOR vupMatrix = _vupVector.toHomogenousMatrix();
-	ROW_VECTOR result = vupMatrix * rotationMatrix;
-
-	_vupVector._x = result.valueOn(0,0);
-	_vupVector._y = result.valueOn(0,1);
-}
-
 void Window::zoom(int step) {
 	double xFactor = min<double>(xOffset(), xOffset() * step / 100.0);
 	double yFactor = min<double>(yOffset(), yOffset() * step / 100.0);
