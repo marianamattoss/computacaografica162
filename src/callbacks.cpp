@@ -94,70 +94,6 @@ extern "C" {
 		}
 	}
 
-	void add_curve_coord_handler(GtkWidget *widget, App *app) {
-		GtkTreeView *treeview = GTK_TREE_VIEW(app_get_ui_element(app, "newCurveCoordinates"));
-		GtkTreeModel *model = gtk_tree_view_get_model(treeview);
-		GtkListStore *store = GTK_LIST_STORE(model);
-		GtkTreeIter iter;
-
-		for(int i=0; i < 3; i++) {
-			gtk_list_store_append(store, &iter);
-			gtk_list_store_set (store, &iter, X_AXIS, 0, Y_AXIS, 0, Z_AXIS, 0, -1);
-		}
-	}
-
-	void add_bsplines_coord_handler(GtkWidget *widget, App *app) {
-		GtkTreeView *treeview = GTK_TREE_VIEW(app_get_ui_element(app, "newBSplineCoordinates"));
-		GtkTreeModel *model = gtk_tree_view_get_model(treeview);
-		GtkListStore *store = GTK_LIST_STORE(model);
-		GtkTreeIter iter;
-
-		gtk_list_store_append(store, &iter);
-		gtk_list_store_set (store, &iter, X_AXIS, 0, Y_AXIS, 0, Z_AXIS, 0, -1);
-	}
-
-	void remove_curve_coord_handler(GtkWidget *widget, App *app) {
-		GtkTreeView *treeview = GTK_TREE_VIEW(app_get_ui_element(app, "newCurveCoordinates"));
-		GtkTreeModel *model = gtk_tree_view_get_model(treeview);
-		GtkListStore *store = GTK_LIST_STORE(model);
-		GtkTreePath *path;
-		GtkTreeIter iter;
-
-		gint rows = gtk_tree_model_iter_n_children(model, NULL);
-
-		if(rows > 4) {
-			for(int i=0; i<3; i++) {
-				path = gtk_tree_path_new_from_indices(rows-1, -1);
-
-				gtk_tree_model_get_iter(model, &iter, path);
-				gtk_list_store_remove(store, &iter);
-				gtk_tree_path_free(path);
-
-				rows--;
-			}
-		}
-	}
-
-	void remove_bsplines_coord_handler(GtkWidget *widget, App *app) {
-		GtkTreeView *treeview = GTK_TREE_VIEW(app_get_ui_element(app, "newCurveCoordinates"));
-		GtkTreeModel *model = gtk_tree_view_get_model(treeview);
-		GtkListStore *store = GTK_LIST_STORE(model);
-		GtkTreePath *path;
-		GtkTreeIter iter;
-
-		gint rows = gtk_tree_model_iter_n_children(model, NULL);
-
-		if(rows > 4) {
-			path = gtk_tree_path_new_from_indices(rows-1, -1);
-
-			gtk_tree_model_get_iter(model, &iter, path);
-			gtk_list_store_remove(store, &iter);
-			gtk_tree_path_free(path);
-
-			rows--;
-		}
-	}
-
 	void show_add_popup_handler(GtkWidget *widget, App *app) {
 		GtkWindow *addObjWindow = GTK_WINDOW(app_get_ui_element(app, "addObjectWindow"));
 		gtk_window_present(addObjWindow);
@@ -247,13 +183,6 @@ extern "C" {
 
 	// Transformations ------------------------------------------------------------------------
 
-	void window_rotate_handler(GtkWidget *widget, App *app) {
-		GtkSpinButton *angleInput = GTK_SPIN_BUTTON(app_get_ui_element(app, "windowAngleSpin"));
-		app->world->rotateWindow( gtk_spin_button_get_value(angleInput) );
-
-		app->mainWindow->updateViewport();
-	}
-
 	void translate_handler(GtkWidget *widget, App *app) {
 		GtkSpinButton *xAxisInput = GTK_SPIN_BUTTON(app_get_ui_element(app, "xFactorBtn"));
 		GtkSpinButton *yAxisInput = GTK_SPIN_BUTTON(app_get_ui_element(app, "yFactorBtn"));
@@ -330,54 +259,5 @@ extern "C" {
 		}
 
 		app->mainWindow->updateViewport();				
-	}
-
-	void lb_handler(GtkWidget *widget, App *app) {
-		Clipper::clippingFunction = Clipper::liangBarsky;
-	}
-
-	void cs_handler(GtkWidget *widget, App *app) {
-		Clipper::clippingFunction = Clipper::cohenSutherland;
-	}
-
-	// Import/Export ----------------------------------------------------------------------------
-
-	void export_handler(GtkWidget *widget, App *app) {
-		GtkTextBuffer* buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(app_get_ui_element(app, "textview")));
-		GtkTextIter end;
-
-		app->world->exportToObj();
-
-		gtk_text_buffer_get_end_iter(buffer, &end);
-		gtk_text_buffer_insert(buffer, &end, "Criado arquivo: export.obj\n", -1);
-	}
-
-	void import_handler(GtkWidget *widget, App *app) {
-		GtkWidget *dialog;
-		GtkListStore *objStore = GTK_LIST_STORE(app_get_ui_element(app, "objStore"));
-		GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_OPEN;
-		gint response;
-		vector<string> objects;
-		GtkTreeIter iter;
-
-		dialog = gtk_file_chooser_dialog_new("Importar arquivo", NULL, action, ("_Cancelar"), GTK_RESPONSE_CANCEL, 
-											 ("_Importar"), GTK_RESPONSE_ACCEPT, NULL);
-
-		response = gtk_dialog_run(GTK_DIALOG(dialog));
-		if (response == GTK_RESPONSE_ACCEPT) {
-			GtkFileChooser *chooser = GTK_FILE_CHOOSER(dialog);
-			string filePath = gtk_file_chooser_get_filename(chooser);
-
-			objects = app->world->importFromObj(filePath);
-		}
-
-		for(string name : objects) {
-			gtk_list_store_append(objStore, &iter);
-			gtk_list_store_set(objStore, &iter, 0, name.c_str(), -1);
-		}
-
-		app->mainWindow->updateViewport();				
-
-		gtk_widget_destroy(dialog);
 	}
 }
