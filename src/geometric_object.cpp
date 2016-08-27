@@ -5,11 +5,6 @@ GeometricObject::GeometricObject(string name, GeometricObjectType type,
 		_name(name), _type(type), _worldCoords(coords) {
 }
 
-GeometricObject::GeometricObject(string name, GeometricObjectType type,
-		vector<Coordinate> coords, bool filled) :
-		_name(name), _type(type), _worldCoords(coords), _filled(filled) {
-}
-
 GeometricObject::~GeometricObject() {
 }
 
@@ -41,10 +36,6 @@ Coordinate GeometricObject::centroid() const {
 	new_y = new_y / _worldCoords.size();
 
 	return Coordinate(new_x, new_y);
-}
-
-bool GeometricObject::filled() const {
-	return _filled;
 }
 
 void GeometricObject::normalizeIn(Window window) {

@@ -20,7 +20,6 @@ extern "C" {
 		GtkNotebook *objNotebook = GTK_NOTEBOOK(app_get_ui_element(app, "objNotebook"));
 		GtkListStore *objStore = GTK_LIST_STORE(app_get_ui_element(app, "objStore"));
 		GtkTreeModel *treeModel;
-		GtkToggleButton *fillPolygon;
 		GtkSpinButton *curveStep;
 		vector<Coordinate> coords;
 		
@@ -46,11 +45,10 @@ extern "C" {
 				break;
 			case 2:
 				// addPolygon
-				fillPolygon = GTK_TOGGLE_BUTTON(app_get_ui_element(app, "fillPolygon"));
 				treeModel = gtk_tree_view_get_model(GTK_TREE_VIEW(app_get_ui_element(app, "newPolygonCoordinates")));
 				coords = app->mainWindow->readCoordFrom(treeModel);
 
-				app->world->addPolygon(name, coords, gtk_toggle_button_get_active(fillPolygon));
+				app->world->addPolygon(name, coords);
 
 				break;
 		}

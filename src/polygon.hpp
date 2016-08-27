@@ -9,7 +9,7 @@ using namespace std;
 
 class Polygon : public GeometricObject {
 public:
-	Polygon(string name, vector<Coordinate> coords, bool filled);
+	Polygon(string name, vector<Coordinate> coords);
 };
 
 #endif /* SRC_POLYGON_H_ */

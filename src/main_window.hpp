@@ -14,18 +14,14 @@ const int Z_AXIS = 2;
 
 struct DrawableObject {
 
-	DrawableObject(bool filled, vector<Coordinate> coords, GeometricObjectType type) :
-		_filled(filled), _coords(coords), _type(type) {};
+	DrawableObject(vector<Coordinate> coords, GeometricObjectType type) :
+		_coords(coords), _type(type) {};
 
 private:
-	bool _filled;
 	vector<Coordinate> _coords;
 	GeometricObjectType _type;
 
 public:
-	bool filled() {
-		return _filled;
-	}
 
 	vector<Coordinate> coords() {
 		return _coords;

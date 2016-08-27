@@ -22,8 +22,8 @@ void World::addLine(string name, Coordinate begin, Coordinate end) {
 	_displayFile.push_back(line);
 }
 
-void World::addPolygon(string name, vector<Coordinate> coords, bool filled) {
-	Polygon * polygon = new Polygon(name, coords, filled);
+void World::addPolygon(string name, vector<Coordinate> coords) {
+	Polygon * polygon = new Polygon(name, coords);
 	normalize(polygon);
 
 	_displayFile.push_back(polygon);

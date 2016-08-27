@@ -35,7 +35,7 @@ vector<Coordinate> MainWindow::readCoordFrom(GtkTreeModel *treeModel) {
 void MainWindow::drawViewport(cairo_t *cr) {
 	/* Set color for background */
 	cairo_set_source_rgb(cr, 1, 1, 1);
-	/* fill in the background color*/
+	/* Fill in the background color*/
 	cairo_paint(cr);
 
 	GtkWidget *drawingArea = GTK_WIDGET(gtk_builder_get_object(_definitions, "drawingArea"));
@@ -78,9 +78,6 @@ void MainWindow::drawSingleObject(cairo_t *cr, DrawableObject object) {
 		cairo_line_to(cr, coords[0]._x + 1, coords[0]._y + 1);
 	else if (object.type() == polygon)
 		cairo_line_to(cr, coords.front()._x, coords.front()._y);
-
-//	if(object.filled())
-//		cairo_fill(cr);
 	
 	cairo_stroke(cr);
 }
@@ -97,11 +94,8 @@ vector<DrawableObject> MainWindow::mapToViewport() {
 	int Yvmax = gtk_widget_get_allocated_height(drawingArea) - MARGIN;
 
 	int x,y;
-	bool shouldFill;
 
 	for (GeometricObject * object : objects) {
-
-		shouldFill = (object->type() == GeometricObjectType::polygon) && object->filled();
 
 		newcoords.clear();
 
@@ -113,7 +107,7 @@ vector<DrawableObject> MainWindow::mapToViewport() {
 		}
 
 		if (!newcoords.empty())
-			drawableObjects.push_back(DrawableObject(shouldFill, newcoords, object->type()));
+			drawableObjects.push_back(DrawableObject(newcoords, object->type()));
 
 	}
 
