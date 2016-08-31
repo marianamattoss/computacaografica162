@@ -3,11 +3,11 @@
 
 #include <string>
 
-#include "geometric_object.hpp"
+#include "geometric_element.hpp"
 
 using namespace std;
 
-class Line : public GeometricObject {
+class Line : public GeometricElement {
 public:
 	Line(string name, Coordinate first, Coordinate second);
 };

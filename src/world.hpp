@@ -3,7 +3,7 @@
 
 #include <string>
 
-#include "geometric_object.hpp"
+#include "geometric_element.hpp"
 #include "point.hpp"
 #include "line.hpp"
 #include "polygon.hpp"
@@ -13,13 +13,13 @@ using namespace std;
 
 class World {
 private:
-	vector<GeometricObject*> _displayFile;
+	vector<GeometricElement*> _displayFile;
 	Window window;
 
 	void normalizeObjects();
-	void normalize(GeometricObject* object);
+	void normalize(GeometricElement* object);
 
-	GeometricObject* getObjectBy(string name);
+	GeometricElement* getObjectBy(string name);
 
 public:
 	World();
@@ -34,7 +34,7 @@ public:
 	void moveWindow(VECTOR step);
 	void zoomWindow(int step);
 
-	vector<GeometricObject*> getObjects();
+	vector<GeometricElement*> getObjects();
 
 	void translateObject(string name, VECTOR deslocation);
 	void scaleObject(string name, VECTOR factor);

@@ -1,30 +1,30 @@
-#include "geometric_object.hpp"
+#include "geometric_element.hpp"
 
-GeometricObject::GeometricObject(string name, GeometricObjectType type,
+GeometricElement::GeometricElement(string name, GeometricElementType type,
 		vector<Coordinate> coords) :
 		_name(name), _type(type), _worldCoords(coords) {
 }
 
-GeometricObject::~GeometricObject() {
+GeometricElement::~GeometricElement() {
 }
 
-string GeometricObject::name() const {
+string GeometricElement::name() const {
 	return _name;
 }
 
-GeometricObjectType GeometricObject::type() const {
+GeometricElementType GeometricElement::type() const {
 	return _type;
 }
 
-vector<Coordinate> GeometricObject::coords() const {
+vector<Coordinate> GeometricElement::coords() const {
 	return _windowCoords;
 }
 
-vector<Coordinate> GeometricObject::worldCoords() const {
+vector<Coordinate> GeometricElement::worldCoords() const {
 	return _worldCoords;
 }
 
-Coordinate GeometricObject::centroid() const {
+Coordinate GeometricElement::centerCoordinate() const {
 	double new_x = 0, new_y = 0;
 
 	for(auto coord : _worldCoords) {
@@ -38,7 +38,7 @@ Coordinate GeometricObject::centroid() const {
 	return Coordinate(new_x, new_y);
 }
 
-void GeometricObject::normalizeIn(Window window) {
+void GeometricElement::normalizeIn(Window window) {
 	Coordinate windowCenter = window.center();
 	SQUARE_MATRIX transformation = window.normalizedTransformation();
 	ROW_VECTOR result;
@@ -61,27 +61,27 @@ void GeometricObject::normalizeIn(Window window) {
 	}
 }
 
-void GeometricObject::translate(VECTOR deslocation) {
-	SQUARE_MATRIX translationMatrix = _buildTranslationMatrix(deslocation);
-	applyTransformation(translationMatrix);
-}
-
-void GeometricObject::scaleTo(VECTOR factors) {
-	SQUARE_MATRIX scaleMatrix = _buildScaleMatrix(factors._x, factors._y);
-	positionBasedTransformation(scaleMatrix, centroid());
-}
-
-void GeometricObject::rotate(double radians) {
+void GeometricElement::rotate(double radians) {
 	SQUARE_MATRIX rotationMatrix = _buildRotationMatrix(radians);
-	positionBasedTransformation(rotationMatrix, centroid());
+	positionBasedTransformation(rotationMatrix, centerCoordinate());
 }
 
-void GeometricObject::rotate(double radians, Coordinate anchor) {
+void GeometricElement::rotate(double radians, Coordinate anchor) {
 	SQUARE_MATRIX rotationMatrix = _buildRotationMatrix(radians);
 	positionBasedTransformation(rotationMatrix, anchor);
 }
 
-void GeometricObject::applyTransformation(SQUARE_MATRIX transfMatrix) {
+void GeometricElement::translate(VECTOR deslocation) {
+	SQUARE_MATRIX translationMatrix = _buildTranslationMatrix(deslocation);
+	applyTransformation(translationMatrix);
+}
+
+void GeometricElement::scaleTo(VECTOR factors) {
+	SQUARE_MATRIX scaleMatrix = _buildScaleMatrix(factors._x, factors._y);
+	positionBasedTransformation(scaleMatrix, centerCoordinate());
+}
+
+void GeometricElement::applyTransformation(SQUARE_MATRIX transfMatrix) {
 	ROW_VECTOR result;
 
 	int numCoords = _worldCoords.size();
@@ -95,7 +95,7 @@ void GeometricObject::applyTransformation(SQUARE_MATRIX transfMatrix) {
 
 }
 
-void GeometricObject::positionBasedTransformation(SQUARE_MATRIX targetTransformation, Coordinate coord) {
+void GeometricElement::positionBasedTransformation(SQUARE_MATRIX targetTransformation, Coordinate coord) {
 	Coordinate originDeslocation(-coord._x, -coord._y);
 
 	SQUARE_MATRIX operationMatrix = _buildTranslationMatrix(originDeslocation) *

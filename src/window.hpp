@@ -5,13 +5,13 @@
 #include <cmath>
 #include <iostream>
 
-#include "transformable_object.hpp"
+#include "transformable_element.hpp"
 
 #define PI 3.14159265358979323846
 #define DEG2RAD(DEG) (DEG*PI/180.0)
 #define RAD2DEG(RAD) (RAD / PI*180.0)
 
-class Window : public TransformableObject {
+class Window : public TransformableElement {
 public:
 	Window(double width, double height);
 

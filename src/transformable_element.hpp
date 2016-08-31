@@ -1,12 +1,5 @@
-/*
- * transformable_object.hpp
- *
- *  Created on: 12 de abr de 2016
- *      Author: plab
- */
-
-#ifndef SRC_TRANSFORMABLE_OBJECT_HPP_
-#define SRC_TRANSFORMABLE_OBJECT_HPP_
+#ifndef SRC_TRANSFORMABLE_ELEMENT_HPP_
+#define SRC_TRANSFORMABLE_ELEMENT_HPP_
 
 #include <cmath>
 #include <cstdio>
@@ -38,10 +31,6 @@ public:
 		return homogeneousMatrix;
 	}
 
-	double length() {
-		return sqrt( pow(_x, 2) + pow(_y, 2) );
-	}
-
 	double dotProduct( Coordinate other ) {
 		return (_x * other._x) + (_y * other._y);
 	}
@@ -54,9 +43,13 @@ public:
 		return acos( dotProduct(target) / (length() * target.length()) );
 	}
 
+	double length() {
+		return sqrt( pow(_x, 2) + pow(_y, 2) );
+	}
+
 	Coordinate operator+( Coordinate other ) {
 			return Coordinate( _x + other._x, _y + other._y );
-		}
+	}
 
 	void operator+=( Coordinate other ) {
 		_x += other._x;
@@ -72,10 +65,10 @@ public:
 	}
 };
 
-class TransformableObject {
+class TransformableElement {
 public:
-	TransformableObject();
-	virtual ~TransformableObject();
+	TransformableElement();
+	virtual ~TransformableElement();
 
 protected:
 	SQUARE_MATRIX _buildTranslationMatrix(VECTOR deslocation);
@@ -83,4 +76,4 @@ protected:
 	SQUARE_MATRIX _buildRotationMatrix(double radians);
 };
 
-#endif /* SRC_TRANSFORMABLE_OBJECT_HPP_ */
+#endif /* SRC_TRANSFORMABLE_ELEMENT_HPP_ */

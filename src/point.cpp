@@ -2,5 +2,5 @@
 #include "point.hpp"
 
 Point::Point(string name, Coordinate coord) :
-		GeometricObject(name, point, {coord} ) {
+		GeometricElement(name, point, {coord} ) {
 }

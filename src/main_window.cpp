@@ -33,19 +33,20 @@ vector<Coordinate> MainWindow::readCoordFrom(GtkTreeModel *treeModel) {
 }
 
 void MainWindow::drawViewport(cairo_t *cr) {
-	/* Set color for background */
+	// Set background color
 	cairo_set_source_rgb(cr, 1, 1, 1);
-	/* Fill in the background color*/
+	
+	// Fill in the background color
 	cairo_paint(cr);
 
 	GtkWidget *drawingArea = GTK_WIDGET(gtk_builder_get_object(_definitions, "drawingArea"));
-	int Xvmax = gtk_widget_get_allocated_width(drawingArea) - MARGIN;
-	int Yvmax = gtk_widget_get_allocated_height(drawingArea) - MARGIN;
+	int xViewMax = gtk_widget_get_allocated_width(drawingArea) - MARGIN;
+	int yViewMax = gtk_widget_get_allocated_height(drawingArea) - MARGIN;
 
 	cairo_move_to(cr, MARGIN, MARGIN);
-	cairo_line_to(cr, Xvmax, MARGIN);
-	cairo_line_to(cr, Xvmax, Yvmax);
-	cairo_line_to(cr, MARGIN, Yvmax);
+	cairo_line_to(cr, xViewMax, MARGIN);
+	cairo_line_to(cr, xViewMax, yViewMax);
+	cairo_line_to(cr, MARGIN, yViewMax);
 	cairo_line_to(cr, MARGIN, MARGIN);
 
 	cairo_stroke(cr);
@@ -55,11 +56,11 @@ void MainWindow::drawObjects(cairo_t *cr) {
 	cairo_set_source_rgb(cr, 0, 0, 0);
 	cairo_set_line_width(cr, 1);
 
-	vector<DrawableObject> objects = mapToViewport();
+	vector<DrawableObject> elements = mapToViewport();
 
-	if (objects.size() > 0) {
-		for (uint i = 0; i < objects.size(); ++i) {
-			drawSingleObject(cr, objects[i]);
+	if (elements.size() > 0) {
+		for (uint i = 0; i < elements.size(); ++i) {
+			drawSingleObject(cr, elements[i]);
 		}
 	}
 }
@@ -83,35 +84,35 @@ void MainWindow::drawSingleObject(cairo_t *cr, DrawableObject object) {
 }
 
 vector<DrawableObject> MainWindow::mapToViewport() {
-	vector<GeometricObject*> objects = _world->getObjects();
-	vector<DrawableObject> drawableObjects;
-	vector<Coordinate> newcoords;
+	vector<GeometricElement*> elements = _world->getObjects();
+	vector<DrawableObject> drawableElements;
+	vector<Coordinate> newCoordinates;
 
 	GtkWidget *drawingArea = GTK_WIDGET(gtk_builder_get_object(_definitions, "drawingArea"));
 	Window window = _world->getWindow();
 
-	int Xvmax = gtk_widget_get_allocated_width(drawingArea) - MARGIN;
-	int Yvmax = gtk_widget_get_allocated_height(drawingArea) - MARGIN;
+	int xViewMax = gtk_widget_get_allocated_width(drawingArea) - MARGIN;
+	int yViewMax = gtk_widget_get_allocated_height(drawingArea) - MARGIN;
 
 	int x,y;
 
-	for (GeometricObject * object : objects) {
+	for (GeometricElement * element : elements) {
 
-		newcoords.clear();
+		newCoordinates.clear();
 
-		for (Coordinate coord : object->coords()) {
-			x = MARGIN + ( ((coord._x + 1) / 2) * (Xvmax - MARGIN) );
-			y = MARGIN + ( (1 - (coord._y + 1 ) / 2 ) * (Yvmax - MARGIN) );
+		for (Coordinate coord : element->coords()) {
+			x = MARGIN + ( ((coord._x + 1) / 2) * (xViewMax - MARGIN) );
+			y = MARGIN + ( (1 - (coord._y + 1 ) / 2 ) * (yViewMax - MARGIN) );
 
-			newcoords.push_back(Coordinate(x, y));
+			newCoordinates.push_back(Coordinate(x, y));
 		}
 
-		if (!newcoords.empty())
-			drawableObjects.push_back(DrawableObject(newcoords, object->type()));
+		if (!newCoordinates.empty())
+			drawableElements.push_back(DrawableObject(newCoordinates, element->type()));
 
 	}
 
-	return drawableObjects;
+	return drawableElements;
 }
 
 void MainWindow::updateRowCount(int newValue) {

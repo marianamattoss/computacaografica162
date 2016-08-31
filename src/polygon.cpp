@@ -1,4 +1,4 @@
 #include "polygon.hpp"
 
 Polygon::Polygon(string name, vector<Coordinate> coords) :
-		GeometricObject(name, polygon, coords) {}
+		GeometricElement(name, polygon, coords) {}

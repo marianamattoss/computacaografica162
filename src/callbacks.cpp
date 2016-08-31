@@ -1,69 +1,21 @@
-#include "app.hpp"
+#include "application.hpp"
 
 extern "C" {
-	// General -------------------------------------------------------------------------------
 
-	void close_app_handler(GtkWidget *widget, App *app) {
-		gtk_main_quit();
-	}
-
-	gboolean draw_handler(GtkWidget *widget, cairo_t *cr, App *app) {
+	// UTIL
+	
+	gboolean draw_handler(GtkWidget *widget, cairo_t *cr, Application *app) {
 		app->mainWindow->drawViewport(cr);
 		app->mainWindow->drawObjects(cr);
 
 		return FALSE;
 	}
 
-	void add_object_handler(GtkWidget *widget, App *app) {
-		GtkWidget *drawingArea = GTK_WIDGET(app_get_ui_element(app, "drawingArea"));
-		GtkEntry *objName = GTK_ENTRY(app_get_ui_element(app, "objName"));
-		GtkNotebook *objNotebook = GTK_NOTEBOOK(app_get_ui_element(app, "objNotebook"));
-		GtkListStore *objStore = GTK_LIST_STORE(app_get_ui_element(app, "objStore"));
-		GtkTreeModel *treeModel;
-		GtkSpinButton *curveStep;
-		vector<Coordinate> coords;
-		
-		const char* name = gtk_entry_get_text(objName);
-		name = (name[0] == '\0') ? "objeto" : name;
-		
-		int pageIndex = gtk_notebook_get_current_page(GTK_NOTEBOOK(objNotebook));
-
-		switch (pageIndex) {
-			case 0:
-				// addPoint
-				treeModel = gtk_tree_view_get_model(GTK_TREE_VIEW(app_get_ui_element(app, "newPointCoordinate")));
-				app->world->addPoint(name, app->mainWindow->readCoordFrom(treeModel)[0]);
-
-				break;
-			case 1:
-				// addLine
-				treeModel = gtk_tree_view_get_model(GTK_TREE_VIEW(app_get_ui_element(app, "newLineCoordinates")));
-				coords = app->mainWindow->readCoordFrom(treeModel);
-
-				app->world->addLine(name, coords[0], coords[1]);
-
-				break;
-			case 2:
-				// addPolygon
-				treeModel = gtk_tree_view_get_model(GTK_TREE_VIEW(app_get_ui_element(app, "newPolygonCoordinates")));
-				coords = app->mainWindow->readCoordFrom(treeModel);
-
-				app->world->addPolygon(name, coords);
-
-				break;
-		}
-
-		GtkTreeIter iter;
-		gtk_list_store_append(objStore, &iter);
-		gtk_list_store_set(objStore, &iter, 0, name, -1);
-
-		gtk_widget_queue_draw(drawingArea);
-
-		GtkWindow *addObjWindow = GTK_WINDOW(app_get_ui_element(app, "addObjectWindow"));
-		gtk_window_close(addObjWindow);
+	void close_app_handler(GtkWidget *widget, Application *app) {
+		gtk_main_quit();
 	}
 
-	void add_polygon_coord_handler(GtkWidget *widget, App *app) {
+	void add_polygon_coord_handler(GtkWidget *widget, Application *app) {
 		GtkTreeView *treeview = GTK_TREE_VIEW(app_get_ui_element(app, "newPolygonCoordinates"));
 		GtkTreeModel *model = gtk_tree_view_get_model(treeview);
 		GtkListStore *store = GTK_LIST_STORE(model);
@@ -73,7 +25,7 @@ extern "C" {
 		gtk_list_store_set (store, &iter, X_AXIS, 0, Y_AXIS, 0, Z_AXIS, 0, -1);
 	}
 
-	void remove_polygon_coord_handler(GtkWidget *widget, App *app) {
+	void remove_polygon_coord_handler(GtkWidget *widget, Application *app) {
 		GtkTreeView *treeview = GTK_TREE_VIEW(app_get_ui_element(app, "newPolygonCoordinates"));
 		GtkTreeModel *model = gtk_tree_view_get_model(treeview);
 		GtkListStore *store = GTK_LIST_STORE(model);
@@ -91,19 +43,19 @@ extern "C" {
 		}
 	}
 
-	void show_add_popup_handler(GtkWidget *widget, App *app) {
+	void show_add_popup_handler(GtkWidget *widget, Application *app) {
 		GtkWindow *addObjWindow = GTK_WINDOW(app_get_ui_element(app, "addObjectWindow"));
 		gtk_window_present(addObjWindow);
 	}
 
-	void close_add_popup_handler(GtkWidget *widget, App *app) {
+	void close_add_popup_handler(GtkWidget *widget, Application *app) {
 		GtkWidget *addObjWindow = GTK_WIDGET(app_get_ui_element(app, "addObjectWindow"));
 		gtk_widget_hide_on_delete(addObjWindow);
 	}
 
-	void close_no_object_handler(GtkWidget *widget, App *app) {
-		GtkWidget *noObject = GTK_WIDGET(app_get_ui_element(app, "noObject"));
-		gtk_widget_hide_on_delete(noObject);
+	void close_no_object_handler(GtkWidget *widget, Application *app) {
+		GtkWidget *errorNotification = GTK_WIDGET(app_get_ui_element(app, "noObject"));
+		gtk_widget_hide_on_delete(errorNotification);
 	}
 
 	void update_cell(GtkCellRendererText *cell, gchar *path_string, gchar *new_text, gpointer user_data, int column) {
@@ -132,23 +84,30 @@ extern "C" {
 		update_cell(cell, path_string, new_text, user_data, 2);
 	}
 
-	// Movements Handler ----------------------------------------------------------------------
+	// MOVE
 
-	void move_up_handler(GtkWidget *widget, App *app) {
+	void move_up_handler(GtkWidget *widget, Application *app) {
 		GtkSpinButton *stepInput = GTK_SPIN_BUTTON(app_get_ui_element(app, "stepSpinBtn"));
 		app->world->moveWindow( VECTOR(0, gtk_spin_button_get_value(stepInput)) );
 
 		app->mainWindow->updateViewport();
 	}
 
-	void move_right_handler(GtkWidget *widget, App *app) {
+	void move_left_handler(GtkWidget *widget, Application *app) {
+		GtkSpinButton *stepInput = GTK_SPIN_BUTTON(app_get_ui_element(app, "stepSpinBtn"));
+		app->world->moveWindow( VECTOR( -gtk_spin_button_get_value(stepInput), 0 ) );
+
+		app->mainWindow->updateViewport();
+	}
+
+	void move_right_handler(GtkWidget *widget, Application *app) {
 		GtkSpinButton *stepInput = GTK_SPIN_BUTTON(app_get_ui_element(app, "stepSpinBtn"));
 		app->world->moveWindow( VECTOR( gtk_spin_button_get_value(stepInput), 0 ) );
 
 		app->mainWindow->updateViewport();
 	}
 	
-	void move_down_handler(GtkWidget *widget, App *app) {
+	void move_down_handler(GtkWidget *widget, Application *app) {
 		GtkSpinButton *stepInput = GTK_SPIN_BUTTON(app_get_ui_element(app, "stepSpinBtn"));
 		app->world->moveWindow( VECTOR( 0, -gtk_spin_button_get_value(stepInput) ) );
 
@@ -156,79 +115,25 @@ extern "C" {
 
 	}
 
-	void move_left_handler(GtkWidget *widget, App *app) {
-		GtkSpinButton *stepInput = GTK_SPIN_BUTTON(app_get_ui_element(app, "stepSpinBtn"));
-		app->world->moveWindow( VECTOR( -gtk_spin_button_get_value(stepInput), 0 ) );
+	// ZOOM
 
-		app->mainWindow->updateViewport();
-	}
-
-	// Zoom Handler ---------------------------------------------------------------------------
-
-	void zoom_in_handler(GtkWidget *widget, App *app) {
+	void zoom_in_handler(GtkWidget *widget, Application *app) {
 		GtkSpinButton *stepInput = GTK_SPIN_BUTTON(app_get_ui_element(app, "stepSpinBtn"));
 		app->world->zoomWindow(gtk_spin_button_get_value(stepInput));
 
 		app->mainWindow->updateViewport();
 	}
-	void zoom_out_handler(GtkWidget *widget, App *app) {
+
+	void zoom_out_handler(GtkWidget *widget, Application *app) {
 		GtkSpinButton *stepInput = GTK_SPIN_BUTTON(app_get_ui_element(app, "stepSpinBtn"));
 		app->world->zoomWindow(-gtk_spin_button_get_value(stepInput));
 
 		app->mainWindow->updateViewport();
 	}
 
-	// Transformations ------------------------------------------------------------------------
+	// TRANSFORMATIONS
 
-	void translate_handler(GtkWidget *widget, App *app) {
-		GtkSpinButton *xAxisInput = GTK_SPIN_BUTTON(app_get_ui_element(app, "xFactorBtn"));
-		GtkSpinButton *yAxisInput = GTK_SPIN_BUTTON(app_get_ui_element(app, "yFactorBtn"));
-		GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(app_get_ui_element(app, "objectsList")));
-		GtkTreeModel *model;
-		GtkTreeIter iter;
-
-		VECTOR deslocation(gtk_spin_button_get_value(xAxisInput), gtk_spin_button_get_value(yAxisInput));
-
-		if (gtk_tree_selection_get_selected(selection, &model, &iter)) {
-			gchar *name;
-			
-			gtk_tree_model_get(model, &iter, 0, &name, -1);
-			app->world->translateObject(string(name), deslocation);
-
-			g_free(name);
-		} else {
-			GtkWindow *noObject = GTK_WINDOW(app_get_ui_element(app, "noObject"));
-			gtk_window_present(noObject);
-		}
-
-		app->mainWindow->updateViewport();
-	}
-
-	void scale_handler(GtkWidget *widget, App *app) {
-		GtkSpinButton *xAxisInput = GTK_SPIN_BUTTON(app_get_ui_element(app, "xFactorBtn"));
-		GtkSpinButton *yAxisInput = GTK_SPIN_BUTTON(app_get_ui_element(app, "yFactorBtn"));
-		GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(app_get_ui_element(app, "objectsList")));
-		GtkTreeModel *model;
-		GtkTreeIter iter;
-
-		VECTOR factor(gtk_spin_button_get_value(xAxisInput), gtk_spin_button_get_value(yAxisInput));
-
-		if (gtk_tree_selection_get_selected(selection, &model, &iter)) {
-			gchar *name;
-			
-			gtk_tree_model_get(model, &iter, 0, &name, -1);
-			app->world->scaleObject(string(name), factor);
-
-			g_free(name);
-		} else {
-			GtkWindow *noObject = GTK_WINDOW(app_get_ui_element(app, "noObject"));
-			gtk_window_present(noObject);
-		}
-
-		app->mainWindow->updateViewport();		
-	}
-
-	void rotate_handler(GtkWidget *widget, App *app) {
+	void rotate_handler(GtkWidget *widget, Application *app) {
 		GtkSpinButton *xAxisInput = GTK_SPIN_BUTTON(app_get_ui_element(app, "xFactorBtn"));
 		GtkSpinButton *yAxisInput = GTK_SPIN_BUTTON(app_get_ui_element(app, "yFactorBtn"));
 		GtkSpinButton *angleInput = GTK_SPIN_BUTTON(app_get_ui_element(app, "angleBtn"));
@@ -251,10 +156,104 @@ extern "C" {
 
 			g_free(name);
 		} else {
-			GtkWindow *noObject = GTK_WINDOW(app_get_ui_element(app, "noObject"));
-			gtk_window_present(noObject);
+			GtkWindow *errorNotification = GTK_WINDOW(app_get_ui_element(app, "noObject"));
+			gtk_window_present(errorNotification);
 		}
 
 		app->mainWindow->updateViewport();				
+	}
+
+	void translate_handler(GtkWidget *widget, Application *app) {
+		GtkSpinButton *xAxisInput = GTK_SPIN_BUTTON(app_get_ui_element(app, "xFactorBtn"));
+		GtkSpinButton *yAxisInput = GTK_SPIN_BUTTON(app_get_ui_element(app, "yFactorBtn"));
+		GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(app_get_ui_element(app, "objectsList")));
+		GtkTreeModel *model;
+		GtkTreeIter iter;
+
+		VECTOR deslocation(gtk_spin_button_get_value(xAxisInput), gtk_spin_button_get_value(yAxisInput));
+
+		if (gtk_tree_selection_get_selected(selection, &model, &iter)) {
+			gchar *name;
+			
+			gtk_tree_model_get(model, &iter, 0, &name, -1);
+			app->world->translateObject(string(name), deslocation);
+
+			g_free(name);
+		} else {
+			GtkWindow *errorNotification = GTK_WINDOW(app_get_ui_element(app, "noObject"));
+			gtk_window_present(errorNotification);
+		}
+
+		app->mainWindow->updateViewport();
+	}
+
+	void scale_handler(GtkWidget *widget, Application *app) {
+		GtkSpinButton *xAxisInput = GTK_SPIN_BUTTON(app_get_ui_element(app, "xFactorBtn"));
+		GtkSpinButton *yAxisInput = GTK_SPIN_BUTTON(app_get_ui_element(app, "yFactorBtn"));
+		GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(app_get_ui_element(app, "objectsList")));
+		GtkTreeModel *model;
+		GtkTreeIter iter;
+
+		VECTOR factor(gtk_spin_button_get_value(xAxisInput), gtk_spin_button_get_value(yAxisInput));
+
+		if (gtk_tree_selection_get_selected(selection, &model, &iter)) {
+			gchar *name;
+			
+			gtk_tree_model_get(model, &iter, 0, &name, -1);
+			app->world->scaleObject(string(name), factor);
+
+			g_free(name);
+		} else {
+			GtkWindow *errorNotification = GTK_WINDOW(app_get_ui_element(app, "noObject"));
+			gtk_window_present(errorNotification);
+		}
+
+		app->mainWindow->updateViewport();		
+	}
+
+	void add_object_handler(GtkWidget *widget, Application *app) {
+		GtkWidget *drawingArea = GTK_WIDGET(app_get_ui_element(app, "drawingArea"));
+		GtkEntry *objName = GTK_ENTRY(app_get_ui_element(app, "objName"));
+		GtkNotebook *objNotebook = GTK_NOTEBOOK(app_get_ui_element(app, "objNotebook"));
+		GtkListStore *objStore = GTK_LIST_STORE(app_get_ui_element(app, "objStore"));
+		GtkTreeModel *treeModel;
+		GtkSpinButton *curveStep;
+		vector<Coordinate> coords;
+		
+		const char* name = gtk_entry_get_text(objName);
+		name = (name[0] == '\0') ? "objeto" : name;
+		
+		int pageIndex = gtk_notebook_get_current_page(GTK_NOTEBOOK(objNotebook));
+
+		switch (pageIndex) {
+			case 0: // POINT
+				treeModel = gtk_tree_view_get_model(GTK_TREE_VIEW(app_get_ui_element(app, "newPointCoordinate")));
+				app->world->addPoint(name, app->mainWindow->readCoordFrom(treeModel)[0]);
+
+				break;
+			case 1: // LINE
+				treeModel = gtk_tree_view_get_model(GTK_TREE_VIEW(app_get_ui_element(app, "newLineCoordinates")));
+				coords = app->mainWindow->readCoordFrom(treeModel);
+
+				app->world->addLine(name, coords[0], coords[1]);
+
+				break;
+			case 2: // POLYOGON
+				treeModel = gtk_tree_view_get_model(GTK_TREE_VIEW(app_get_ui_element(app, "newPolygonCoordinates")));
+				coords = app->mainWindow->readCoordFrom(treeModel);
+
+				app->world->addPolygon(name, coords);
+
+				break;
+		}
+
+		GtkTreeIter iter;
+		gtk_list_store_append(objStore, &iter);
+		gtk_list_store_set(objStore, &iter, 0, name, -1);
+
+		gtk_widget_queue_draw(drawingArea);
+
+		GtkWindow *windowToClose = GTK_WINDOW(app_get_ui_element(app, "addObjectWindow"));
+		gtk_window_close(windowToClose);
 	}
 }

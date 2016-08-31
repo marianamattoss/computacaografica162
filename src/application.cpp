@@ -1,6 +1,6 @@
-#include "app.hpp"
+#include "application.hpp"
 
-void app_init(App *app) {
+void app_init(Application *app) {
 	GError *err = NULL;
 
 	app->definitions = gtk_builder_new();
@@ -25,6 +25,6 @@ void app_init(App *app) {
 	gtk_main();
 }
 
-GObject *app_get_ui_element(App *app, const gchar *name) {
-	return gtk_builder_get_object(app->definitions, name);
+GObject *app_get_ui_element(Application *application, const gchar *name) {
+	return gtk_builder_get_object(application->definitions, name);
 }

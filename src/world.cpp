@@ -44,21 +44,21 @@ void World::zoomWindow(int step) {
 }
 
 void World::normalizeObjects() {
-	for (GeometricObject * object : _displayFile) {
+	for (GeometricElement * object : _displayFile) {
 		normalize(object);
 	}
 }
 
-void World::normalize(GeometricObject* object) {
+void World::normalize(GeometricElement* object) {
 	object->normalizeIn(window);
 }
 
-vector<GeometricObject*> World::getObjects(){
+vector<GeometricElement*> World::getObjects(){
 	return _displayFile;
 }
 
-GeometricObject* World::getObjectBy(string name) {
-	for (GeometricObject * object : _displayFile) {
+GeometricElement* World::getObjectBy(string name) {
+	for (GeometricElement * object : _displayFile) {
 		if(object->name() == name) {
 			return object;
 		}
@@ -66,25 +66,25 @@ GeometricObject* World::getObjectBy(string name) {
 }
 
 void World::translateObject(string name, VECTOR deslocation) {
-	GeometricObject * targetObject = getObjectBy(name);
+	GeometricElement * targetObject = getObjectBy(name);
 	targetObject->translate(deslocation);
 	normalize(targetObject);
 }
 
 void World::scaleObject(string name, VECTOR factor) {
-	GeometricObject* targetObject = getObjectBy(name);
+	GeometricElement* targetObject = getObjectBy(name);
 	targetObject->scaleTo(factor);
 	normalize(targetObject);
 }
 
 void World::rotateObject(string name, double angle) {
-	GeometricObject* targetObject = getObjectBy(name);
+	GeometricElement* targetObject = getObjectBy(name);
 	targetObject->rotate( DEG2RAD(angle) );
 	normalize(targetObject);
 }
 
 void World::rotateObject(string name, double angle, Coordinate anchor) {
-	GeometricObject* targetObject = getObjectBy(name);
+	GeometricElement* targetObject = getObjectBy(name);
 	targetObject->rotate(DEG2RAD(angle), anchor);
 	normalize(targetObject);
 }

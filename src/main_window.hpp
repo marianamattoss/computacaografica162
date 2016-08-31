@@ -3,7 +3,7 @@
 
 #include <gtk/gtk.h>
 
-#include "geometric_object.hpp"
+#include "geometric_element.hpp"
 #include "world.hpp"
 #include "window.hpp"
 #include "matrix.hpp"
@@ -14,12 +14,12 @@ const int Z_AXIS = 2;
 
 struct DrawableObject {
 
-	DrawableObject(vector<Coordinate> coords, GeometricObjectType type) :
+	DrawableObject(vector<Coordinate> coords, GeometricElementType type) :
 		_coords(coords), _type(type) {};
 
 private:
 	vector<Coordinate> _coords;
-	GeometricObjectType _type;
+	GeometricElementType _type;
 
 public:
 
@@ -27,7 +27,7 @@ public:
 		return _coords;
 	}
 
-	GeometricObjectType type() { return _type; }
+	GeometricElementType type() { return _type; }
 };
 
 class MainWindow {

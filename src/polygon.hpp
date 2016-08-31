@@ -3,11 +3,11 @@
 
 #include <string>
 
-#include "geometric_object.hpp"
+#include "geometric_element.hpp"
 
 using namespace std;
 
-class Polygon : public GeometricObject {
+class Polygon : public GeometricElement {
 public:
 	Polygon(string name, vector<Coordinate> coords);
 };

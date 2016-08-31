@@ -155,13 +155,11 @@
     <property name="type_hint">dialog</property>
     <property name="has_resize_grip">False</property>
     <property name="message_type">warning</property>
-    <property name="text" translatable="yes">Atenção</property>
-    <property name="secondary_text" translatable="yes">Para efetuar uma transformação, é necessário selecionar um elemento.</property>
+    <property name="text" translatable="yes">Você precisa selecionar um objeto antes de efetuar alguma transformação!</property>
     <signal name="delete-event" handler="gtk_widget_hide_on_delete" swapped="no"/>
     <child internal-child="vbox">
       <object class="GtkBox" id="messagedialog-vbox">
         <property name="can_focus">False</property>
-        <property name="resize_mode">immediate</property>
         <property name="orientation">vertical</property>
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="messagedialog-action_area">

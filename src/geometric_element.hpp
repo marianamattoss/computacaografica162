@@ -1,14 +1,14 @@
-#ifndef SRC_GEOMETRICOBJECT_H_
-#define SRC_GEOMETRICOBJECT_H_
+#ifndef SRC_GEOMETRICELEMENT_H_
+#define SRC_GEOMETRICELEMENT_H_
 
 #include <string>
 
-#include "transformable_object.hpp"
+#include "transformable_element.hpp"
 #include "window.hpp"
 
 using namespace std;
 
-enum GeometricObjectType {
+enum GeometricElementType {
 	point,
 	line,
 	polygon
@@ -16,16 +16,16 @@ enum GeometricObjectType {
 
 // ---------------------------
 
-class GeometricObject : public TransformableObject {
+class GeometricElement : public TransformableElement {
 public:
-	GeometricObject(string name,  GeometricObjectType type, vector<Coordinate> coords);
-	virtual ~GeometricObject();
+	GeometricElement(string name,  GeometricElementType type, vector<Coordinate> coords);
+	virtual ~GeometricElement();
 
 	string name() const;
-	GeometricObjectType type() const;
+	GeometricElementType type() const;
 	vector<Coordinate> coords() const;
 	vector<Coordinate> worldCoords() const;
-	Coordinate centroid() const;
+	Coordinate centerCoordinate() const;
 
 	void normalizeIn(Window window);
 
@@ -40,9 +40,9 @@ private:
 
 protected:
 	string _name;
-	GeometricObjectType _type;
+	GeometricElementType _type;
 	vector<Coordinate> _worldCoords;
 	vector<Coordinate> _windowCoords;
 };
 
-#endif /* SRC_GEOMETRICOBJECT_H_ */
+#endif /* SRC_GEOMETRICELEMENT_H_ */
