@@ -3,7 +3,7 @@
 extern "C" {
 
 	// UTIL
-	
+
 	gboolean draw_handler(GtkWidget *widget, cairo_t *cr, Application *app) {
 		app->mainWindow->drawViewport(cr);
 		app->mainWindow->drawObjects(cr);
@@ -63,13 +63,13 @@ extern "C" {
 		GtkTreeModel *model = gtk_tree_view_get_model(treeview);
 		GtkTreeIter iter;
 		GValue new_value = G_VALUE_INIT;
-		
+
 		gtk_tree_model_get_iter_from_string(model, &iter, path_string);
-		
+
 		g_value_init (&new_value, G_TYPE_DOUBLE);
 		g_value_set_double (&new_value, atof(new_text));
-		
-		gtk_list_store_set_value(GTK_LIST_STORE(model), &iter, column, &new_value);		
+
+		gtk_list_store_set_value(GTK_LIST_STORE(model), &iter, column, &new_value);
 	}
 
 	void x_axis_cell_updated(GtkCellRendererText *cell, gchar *path_string, gchar *new_text, gpointer user_data) {
@@ -106,7 +106,7 @@ extern "C" {
 
 		app->mainWindow->updateViewport();
 	}
-	
+
 	void move_down_handler(GtkWidget *widget, Application *app) {
 		GtkSpinButton *stepInput = GTK_SPIN_BUTTON(app_get_ui_element(app, "stepSpinBtn"));
 		app->world->moveWindow( VECTOR( 0, -gtk_spin_button_get_value(stepInput) ) );
@@ -144,7 +144,7 @@ extern "C" {
 
 		if (gtk_tree_selection_get_selected(selection, &model, &iter)) {
 			gchar *name;
-			
+
 			gtk_tree_model_get(model, &iter, 0, &name, -1);
 
 			if(gtk_toggle_button_get_active(rotateUsingCentroid)) {
@@ -160,7 +160,7 @@ extern "C" {
 			gtk_window_present(errorNotification);
 		}
 
-		app->mainWindow->updateViewport();				
+		app->mainWindow->updateViewport();
 	}
 
 	void translate_handler(GtkWidget *widget, Application *app) {
@@ -174,7 +174,7 @@ extern "C" {
 
 		if (gtk_tree_selection_get_selected(selection, &model, &iter)) {
 			gchar *name;
-			
+
 			gtk_tree_model_get(model, &iter, 0, &name, -1);
 			app->world->translateObject(string(name), deslocation);
 
@@ -198,7 +198,7 @@ extern "C" {
 
 		if (gtk_tree_selection_get_selected(selection, &model, &iter)) {
 			gchar *name;
-			
+
 			gtk_tree_model_get(model, &iter, 0, &name, -1);
 			app->world->scaleObject(string(name), factor);
 
@@ -208,7 +208,7 @@ extern "C" {
 			gtk_window_present(errorNotification);
 		}
 
-		app->mainWindow->updateViewport();		
+		app->mainWindow->updateViewport();
 	}
 
 	void add_object_handler(GtkWidget *widget, Application *app) {
@@ -219,10 +219,10 @@ extern "C" {
 		GtkTreeModel *treeModel;
 		GtkSpinButton *curveStep;
 		vector<Coordinate> coords;
-		
+
 		const char* name = gtk_entry_get_text(objName);
 		name = (name[0] == '\0') ? "objeto" : name;
-		
+
 		int pageIndex = gtk_notebook_get_current_page(GTK_NOTEBOOK(objNotebook));
 
 		switch (pageIndex) {
@@ -255,5 +255,53 @@ extern "C" {
 
 		GtkWindow *windowToClose = GTK_WINDOW(app_get_ui_element(app, "addObjectWindow"));
 		gtk_window_close(windowToClose);
+	}
+
+	void window_rotate_handler(GtkWidget *widget, Application *app) {
+		GtkSpinButton *angleInput = GTK_SPIN_BUTTON(app_get_ui_element(app, "windowAngleSpin"));
+ 		app->world->rotateWindow( gtk_spin_button_get_value(angleInput) );
+
+ 		app->mainWindow->updateViewport();
+ 	}
+
+	// IMPORT/EXPORT
+
+	void export_handler(GtkWidget *widget, Application *app) {
+		GtkTextBuffer* buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(app_get_ui_element(app, "textview")));
+		GtkTextIter end;
+
+		app->world->exportToObj();
+
+		gtk_text_buffer_get_end_iter(buffer, &end);
+		gtk_text_buffer_insert(buffer, &end, "Criado arquivo: export.obj\n", -1);
+	}
+
+	void import_handler(GtkWidget *widget, Application *app) {
+		GtkWidget *dialog;
+		GtkListStore *objStore = GTK_LIST_STORE(app_get_ui_element(app, "objStore"));
+		GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_OPEN;
+		gint response;
+		vector<string> objects;
+		GtkTreeIter iter;
+
+		dialog = gtk_file_chooser_dialog_new("Importar arquivo", NULL, action, ("_Cancelar"), GTK_RESPONSE_CANCEL,
+											 ("_Importar"), GTK_RESPONSE_ACCEPT, NULL);
+
+		response = gtk_dialog_run(GTK_DIALOG(dialog));
+		if (response == GTK_RESPONSE_ACCEPT) {
+			GtkFileChooser *chooser = GTK_FILE_CHOOSER(dialog);
+			string filePath = gtk_file_chooser_get_filename(chooser);
+
+			objects = app->world->importFromObj(filePath);
+		}
+
+		for(string name : objects) {
+			gtk_list_store_append(objStore, &iter);
+			gtk_list_store_set(objStore, &iter, 0, name.c_str(), -1);
+		}
+
+		app->mainWindow->updateViewport();
+
+		gtk_widget_destroy(dialog);
 	}
 }

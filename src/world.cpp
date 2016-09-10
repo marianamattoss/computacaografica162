@@ -49,6 +49,11 @@ void World::normalizeObjects() {
 	}
 }
 
+void World::rotateWindow(double angle) {
+	window.rotate( DEG2RAD(angle) );
+	normalizeObjects();
+}
+
 void World::normalize(GeometricElement* object) {
 	object->normalizeIn(window);
 }
@@ -87,4 +92,29 @@ void World::rotateObject(string name, double angle, Coordinate anchor) {
 	GeometricElement* targetObject = getObjectBy(name);
 	targetObject->rotate(DEG2RAD(angle), anchor);
 	normalize(targetObject);
+}
+
+void World::exportToObj() {
+	ObjectDescriptor* exporter = new ObjectDescriptor();
+
+	for ( GeometricElement * object : _displayFile ) {
+		exporter->store(object->name(), object->type(),object->worldCoords());
+	}
+
+	exporter->persist();
+}
+
+vector<string> World::importFromObj(string filePath) {
+	ObjectDescriptor* importer = new ObjectDescriptor();
+	vector<string> names;
+
+	_displayFile = importer->parse(filePath);
+
+	for (GeometricElement * object : _displayFile) {
+		names.push_back(object->name());
+	}
+
+	normalizeObjects();
+
+	return names;
 }

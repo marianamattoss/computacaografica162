@@ -975,6 +975,104 @@
                                   </packing>
                                 </child>
                                 <child>
+                                  <object class="GtkAdjustment" id="windowAngleAdjust">
+                                    <property name="upper">360</property>
+                                    <property name="value">45</property>
+                                    <property name="step_increment">5</property>
+                                    <property name="page_increment">10</property>
+                                  </object>
+                                  <object class="GtkGrid" id="grid15">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="margin_left">5</property>
+                                    <property name="margin_top">20</property>
+                                    <child>
+                                      <object class="GtkSpinButton" id="windowAngleSpin">
+                                        <property name="width_request">165</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="text" translatable="yes">45</property>
+                                        <property name="adjustment">windowAngleAdjust</property>
+                                        <property name="numeric">True</property>
+                                        <property name="value">45</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">1</property>
+                                        <property name="top_attach">0</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel" id="label32">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="margin_right">5</property>
+                                        <property name="margin_top">5</property>
+                                        <property name="margin_bottom">5</property>
+                                        <property name="label" translatable="yes"> °</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">2</property>
+                                        <property name="top_attach">0</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel" id="label36">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="margin_left">5</property>
+                                        <property name="margin_top">5</property>
+                                        <property name="margin_bottom">5</property>
+                                        <property name="label" translatable="yes">Ângulo: </property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">0</property>
+                                        <property name="top_attach">0</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
+                                      </packing>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">4</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkGrid" id="grid16">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <child>
+                                      <object class="GtkButton" id="windowRotateBtn">
+                                        <property name="label" translatable="yes">Rotacionar</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">True</property>
+                                        <property name="margin_left">10</property>
+                                        <property name="margin_right">10</property>
+                                        <property name="margin_top">10</property>
+                                        <property name="hexpand">True</property>
+                                        <signal name="clicked" handler="window_rotate_handler" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">0</property>
+                                        <property name="top_attach">0</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
+                                      </packing>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">5</property>
+                                  </packing>
+                                </child>
+                                <child>
                                   <placeholder/>
                                 </child>
                                 <child>
@@ -1002,7 +1100,7 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkBox" id="box8">
+                     <object class="GtkBox" id="box8">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="margin_left">5</property>
@@ -1011,10 +1109,32 @@
                         <property name="orientation">vertical</property>
                         <property name="spacing">5</property>
                         <child>
-                          <placeholder/>
+                          <object class="GtkButton" id="export">
+                            <property name="label" translatable="yes">Exportar</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">True</property>
+                            <signal name="clicked" handler="export_handler" swapped="no"/>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">0</property>
+                          </packing>
                         </child>
                         <child>
-                          <placeholder/>
+                          <object class="GtkButton" id="import">
+                            <property name="label" translatable="yes">Importar</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">True</property>
+                            <signal name="clicked" handler="import_handler" swapped="no"/>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">1</property>
+                          </packing>
                         </child>
                       </object>
                       <packing>
@@ -1529,6 +1649,50 @@
             <property name="expand">False</property>
             <property name="fill">True</property>
             <property name="position">2</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
+  <object class="GtkFileChooserDialog" id="fileChooserDialog">
+    <property name="can_focus">False</property>
+    <property name="window_position">center</property>
+    <property name="destroy_with_parent">True</property>
+    <property name="type_hint">dialog</property>
+    <property name="transient_for">mainWindow</property>
+    <property name="create_folders">False</property>
+    <signal name="delete-event" handler="gtk_widget_hide_on_delete" swapped="no"/>
+    <child internal-child="vbox">
+      <object class="GtkBox" id="filechooserdialog-vbox1">
+        <property name="can_focus">False</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">2</property>
+        <child internal-child="action_area">
+          <object class="GtkButtonBox" id="filechooserdialog-action_area1">
+            <property name="can_focus">False</property>
+            <property name="layout_style">end</property>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
+              <object class="GtkButton" id="GTK_RESPONSE_ACCEPT">
+                <property name="label" translatable="yes">Importar</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="pack_type">end</property>
+            <property name="position">0</property>
           </packing>
         </child>
       </object>

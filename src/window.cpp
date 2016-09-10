@@ -50,3 +50,11 @@ SQUARE_MATRIX Window::normalizedTransformation() {
 	return translationMatrix * rotationMatrix * translationBackMatrix;
 }
 
+void Window::rotate(double angle) {		
+ 	SQUARE_MATRIX rotationMatrix = _buildRotationMatrix(angle);
+ 	ROW_VECTOR vupMatrix = _vupVector.toHomogenousMatrix();
+ 	ROW_VECTOR result = vupMatrix * rotationMatrix;
+
+ 	_vupVector._x = result.valueOn(0,0);
+ 	_vupVector._y = result.valueOn(0,1);
+ }

@@ -8,6 +8,7 @@
 #include "line.hpp"
 #include "polygon.hpp"
 #include "window.hpp"
+#include "object_descriptor.hpp"
 
 using namespace std;
 
@@ -34,12 +35,17 @@ public:
 	void moveWindow(VECTOR step);
 	void zoomWindow(int step);
 
+	void rotateWindow(double angle);
+
 	vector<GeometricElement*> getObjects();
 
 	void translateObject(string name, VECTOR deslocation);
 	void scaleObject(string name, VECTOR factor);
 	void rotateObject(string name, double angle);
 	void rotateObject(string name, double angle, Coordinate anchor);
+
+	void exportToObj();
+ 	vector<string> importFromObj(string filePath);
 };
 
 #endif /* SRC_WORLD_H_ */
