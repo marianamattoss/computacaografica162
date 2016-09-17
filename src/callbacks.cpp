@@ -1,4 +1,5 @@
 #include "application.hpp"
+#include "clipper.hpp"
 
 extern "C" {
 

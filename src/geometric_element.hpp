@@ -6,6 +6,8 @@
 #include "transformable_element.hpp"
 #include "window.hpp"
 
+#define CLIPPED_OBJECT vector<Coordinate>
+
 using namespace std;
 
 enum GeometricElementType {
@@ -28,6 +30,8 @@ public:
 	Coordinate centerCoordinate() const;
 
 	void normalizeIn(Window window);
+	virtual void applyClipping() = 0;		
+ 	vector<CLIPPED_OBJECT> getClippedObjects();
 
 	void translate(VECTOR deslocation);
 	void scaleTo(VECTOR factors);
@@ -43,6 +47,7 @@ protected:
 	GeometricElementType _type;
 	vector<Coordinate> _worldCoords;
 	vector<Coordinate> _windowCoords;
+	vector<CLIPPED_OBJECT> _clippedObjects;
 };
 
 #endif /* SRC_GEOMETRICELEMENT_H_ */

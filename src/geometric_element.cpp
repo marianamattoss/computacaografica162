@@ -24,6 +24,10 @@ vector<Coordinate> GeometricElement::worldCoords() const {
 	return _worldCoords;
 }
 
+vector<CLIPPED_OBJECT> GeometricElement::getClippedObjects() {		
+	return _clippedObjects;		
+}
+
 Coordinate GeometricElement::centerCoordinate() const {
 	double new_x = 0, new_y = 0;
 

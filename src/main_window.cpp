@@ -39,6 +39,10 @@ void MainWindow::drawViewport(cairo_t *cr) {
 	// Fill in the background color
 	cairo_paint(cr);
 
+	// Draw red border
+	cairo_set_source_rgb(cr, 1, 0, 0);		
+ 	cairo_set_line_width(cr, 1);
+
 	GtkWidget *drawingArea = GTK_WIDGET(gtk_builder_get_object(_definitions, "drawingArea"));
 	int xViewMax = gtk_widget_get_allocated_width(drawingArea) - MARGIN;
 	int yViewMax = gtk_widget_get_allocated_height(drawingArea) - MARGIN;
@@ -84,35 +88,38 @@ void MainWindow::drawSingleObject(cairo_t *cr, DrawableObject object) {
 }
 
 vector<DrawableObject> MainWindow::mapToViewport() {
-	vector<GeometricElement*> elements = _world->getObjects();
-	vector<DrawableObject> drawableElements;
-	vector<Coordinate> newCoordinates;
+	vector<GeometricElement*> objects = _world->getObjects();
+	vector<DrawableObject> drawableObjects;
+	vector<Coordinate> newcoords, clippedCoords;
 
 	GtkWidget *drawingArea = GTK_WIDGET(gtk_builder_get_object(_definitions, "drawingArea"));
 	Window window = _world->getWindow();
 
-	int xViewMax = gtk_widget_get_allocated_width(drawingArea) - MARGIN;
-	int yViewMax = gtk_widget_get_allocated_height(drawingArea) - MARGIN;
+	int Xvmax = gtk_widget_get_allocated_width(drawingArea) - MARGIN;
+	int Yvmax = gtk_widget_get_allocated_height(drawingArea) - MARGIN;
 
 	int x,y;
 
-	for (GeometricElement * element : elements) {
+	for (GeometricElement * object : objects) {
+		object->applyClipping();
 
-		newCoordinates.clear();
+		for (vector<Coordinate> clippedCoords : object->getClippedObjects()) {
+			newcoords.clear();
 
-		for (Coordinate coord : element->coords()) {
-			x = MARGIN + ( ((coord._x + 1) / 2) * (xViewMax - MARGIN) );
-			y = MARGIN + ( (1 - (coord._y + 1 ) / 2 ) * (yViewMax - MARGIN) );
+			for (Coordinate coord : clippedCoords) {
+				x = MARGIN + ( ((coord._x + 1) / 2) * (Xvmax - MARGIN) );
+				y = MARGIN + ( (1 - (coord._y + 1 ) / 2 ) * (Yvmax - MARGIN) );
 
-			newCoordinates.push_back(Coordinate(x, y));
+				newcoords.push_back(Coordinate(x, y));
+			}
+
+			if (!newcoords.empty())
+				drawableObjects.push_back(DrawableObject(newcoords, object->type()));
 		}
-
-		if (!newCoordinates.empty())
-			drawableElements.push_back(DrawableObject(newCoordinates, element->type()));
 
 	}
 
-	return drawableElements;
+	return drawableObjects;
 }
 
 void MainWindow::updateRowCount(int newValue) {

@@ -9,6 +9,7 @@
 #include "polygon.hpp"
 #include "window.hpp"
 #include "object_descriptor.hpp"
+#include "clipper.hpp"
 
 using namespace std;
 
